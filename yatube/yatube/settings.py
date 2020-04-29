@@ -25,7 +25,12 @@ SECRET_KEY = 'wt7jsqg-7w&@hde(6v6*gj2e^o8n$^@hkz-f)m2r7ww@vw8z9j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "[::1]",
+    "testserver",
+]
 
 
 # Application definition
@@ -33,12 +38,15 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users',
     'posts',
+    "django.contrib.sites",
+    "django.contrib.flatpages",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
@@ -130,5 +138,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Идентификатор текущего сайта
+SITE_ID = 1

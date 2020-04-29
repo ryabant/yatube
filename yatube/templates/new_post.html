@@ -9,7 +9,7 @@
             <div class="card-header">Новая запись</div>
             <div class="card-body">
 
-            <form method="post" >
+            <form method="post" enctype="multipart/form-data">
               {% csrf_token %}
 
                 {% for field in form %}
@@ -27,10 +27,16 @@
                       </div>
                       {% endfor %}
                   {% endfor %}
-                
-                <div>              
-                  <button type="submit" class="btn btn-primary">Опубликовать</button>
+                {% if post %}
+                <div>
+                  <button type="submit" class="btn btn-primary">Сохранить</button>              
                 </div>
+                {% else %}
+                <div>              
+                  <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+                {% endif %}
+                
               </form>
 
               </div> <!-- card body -->

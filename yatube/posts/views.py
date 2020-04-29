@@ -1,30 +1,82 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404, reverse
 from .models import Post, Group
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
-# Create your views here.
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 def index(request):
-    latest = Post.objects.order_by("-pub_date")[:11]
-    return render(request, "index.html", {"posts": latest})
+    post_list = Post.objects.order_by("-pub_date").all()
+    paginator = Paginator(post_list, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(request, 'index.html', {'page': page, 'paginator': paginator})
 
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group=group).order_by("-pub_date")[:12]
-    return render(request, "group.html", {"group": group, "posts": posts})
+    post_list = Post.objects.filter(group=group).order_by("-pub_date").all()
+    paginator = Paginator(post_list, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(request, "group.html", {"group": group, 'page': page, 'paginator': paginator})
 
 
 @login_required
 def new_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            group = form.cleaned_data['group']
-            text = form.cleaned_data['text']
-            Post.objects.create(author=request.user, group=group, text=text)
-            return redirect('index')
-
-    form = PostForm()
+    form = PostForm(request.POST or None, files=request.FILES or None)
+    if request.POST and form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        post.save()
+        return redirect('index')
     return render(request, 'new_post.html', {'form': form})
+
+
+@login_required
+def post_edit(request, username, post_id):
+    profile = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, pk=post_id)
+    if profile != request.user:
+        return redirect("post", username=request.user.username, post_id=post_id)
+
+    form = PostForm(request.POST or None,
+                    files=request.FILES or None, instance=post)
+    if request.POST and form.is_valid():
+        form.save()
+        return redirect("post", username=request.user.username, post_id=post_id)
+
+    return render(request, "new_post.html", {'form': form, 'post': post})
+
+
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    post_list = Post.objects.filter(
+        author=user).order_by("-pub_date").all()
+    number_of_posts = post_list.count()
+    paginator = Paginator(post_list, 5)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(request, "profile.html", {"profile": user, 'page': page, 'paginator': paginator,
+                                            'number_of_posts': number_of_posts})
+
+
+def post_view(request, username, post_id):
+    profile = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, pk=post_id, author=profile)
+    number_of_posts = Post.objects.filter(author=profile).count()
+    return render(request, "post.html", {'post': post, "profile": profile,
+                                         'number_of_posts': number_of_posts})
+
+
+def page_not_found(request, exception):
+    # Переменная exception содержит отладочную информацию,
+    # выводить её в шаблон пользователской страницы 404 мы не станем
+    return render(request, "misc/404.html", {"path": request.path}, status=404)
+
+
+def server_error(request):
+    return render(request, "misc/500.html", status=500)
