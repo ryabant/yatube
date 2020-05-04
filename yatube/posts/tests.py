@@ -1,9 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from .models import Post, Group
-from .forms import PostForm
-from django.shortcuts import render, redirect, get_object_or_404, reverse
-
 
 User = get_user_model()
 

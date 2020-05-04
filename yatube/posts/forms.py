@@ -1,5 +1,6 @@
 from django.forms import ModelForm
-from .models import Post
+from .models import Post, Comment
+from django import forms
 
 
 class PostForm(ModelForm):
@@ -14,3 +15,13 @@ class PostForm(ModelForm):
         help_texts = {
             'group': 'Сообщество для публикации',
         }
+
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        labels = {
+            'text': 'Текст',
+        }
+        widgets = {'text': forms.Textarea(attrs={'cols': 80})}
