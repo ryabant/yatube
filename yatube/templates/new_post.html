@@ -4,44 +4,45 @@
 {% load user_filters %}
 
 <div class="row justify-content-center">
-    <div class="col-md-10 p-5">
-        <div class="card">
-            <div class="card-header">Новая запись</div>
-            <div class="card-body">
+  <div class="col-md-10 p-5">
+    <div class="card">
+      <div class="card-header">Новая запись</div>
+      <div class="card-body">
 
-            <form method="post" enctype="multipart/form-data">
-              {% csrf_token %}
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
 
-                {% for field in form %}
-                    <div class="form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-                            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required">*</span>{% endif %}</label>
-                                {{ field|addclass:"form-control" }}
+          {% for field in form %}
+          <div class="form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span
+                class="required">*</span>{% endif %}</label>
+            {{ field|addclass:"form-control" }}
 
-                                {% if field.help_text %}
-                                <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
-                                {% endif %}               
-                            </div>
-                      {% for error in field.errors %}
-                      <div class="alert alert-danger" role="alert">
-                        {{ error }}
-                      </div>
-                      {% endfor %}
-                  {% endfor %}
-                {% if post %}
-                <div>
-                  <button type="submit" class="btn btn-primary">Сохранить</button>              
-                </div>
-                {% else %}
-                <div>              
-                  <button type="submit" class="btn btn-primary">Добавить</button>
-                </div>
-                {% endif %}
-                
-              </form>
+            {% if field.help_text %}
+            <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+            {% endif %}
+          </div>
+          {% for error in field.errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+          {% endfor %}
+          {% endfor %}
+          {% if post %}
+          <div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+          {% else %}
+          <div>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+          </div>
+          {% endif %}
 
-              </div> <!-- card body -->
-        </div> <!-- card -->
-    </div> <!-- col -->
+        </form>
+
+      </div> <!-- card body -->
+    </div> <!-- card -->
+  </div> <!-- col -->
 </div> <!-- row -->
 
 {% endblock %}

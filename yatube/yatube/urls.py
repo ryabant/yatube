@@ -34,6 +34,7 @@ urlpatterns += [
     path('about-author/', views.flatpage,
          {'url': '/about-author/'}, name='about'),
     path('about-spec/', views.flatpage, {'url': '/about-spec/'}, name='terms'),
+    path('contacts/', views.flatpage, {'url': '/contacts/'}, name='contacts'),
     path("", include("posts.urls")),
 ]
 

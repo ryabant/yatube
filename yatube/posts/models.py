@@ -16,7 +16,8 @@ class Group(models.Model):
 
 class Post(models.Model):
     text = models.TextField()
-    pub_date = models.DateTimeField("date published", auto_now_add=True)
+    pub_date = models.DateTimeField(
+        "date published", auto_now_add=True, db_index=True)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="author_posts")
     group = models.ForeignKey(Group, on_delete=models.CASCADE,
@@ -34,3 +35,10 @@ class Comment(models.Model):
         User, on_delete=models.CASCADE, related_name="author_comment")
     text = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="follower")
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following")
